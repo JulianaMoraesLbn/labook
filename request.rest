@@ -1,0 +1,55 @@
+
+###CRIAR CONTA
+POST http://localhost:3003/user/signup
+Content-Type: application/json
+
+{
+    "name": "Livia",
+    "email": "livia@email.com",
+    "password": "12345"
+}
+
+
+###CRIAR CONTA
+POST http://localhost:3003/user/signup
+Content-Type: application/json
+
+{
+    "name": "Lilica",
+    "email": "lilica@email.com",
+    "password": "12345"
+}
+
+###LOGIN
+POST http://localhost:3003/user/login
+Content-Type: application/json
+
+{
+    "email": "juliana@email.com",
+    "password": "1544889977"
+}
+
+###LOGIN
+POST http://localhost:3003/user/login
+Content-Type: application/json
+
+{
+    "email": "livia@email.com",
+    "password": "12345"
+}
+
+###NOVO POST
+
+POST http://localhost:3003/post/
+Content-Type: application/json
+
+{
+    "photo": "Livia",
+    "description": "descrção foto", 
+    "type": , 
+    "author_id"
+}
+
+
+###POST POR ID
+GET http://localhost:3003/post/070e221c-acc6-427a-8d21-59285417fabc
