@@ -1,5 +1,4 @@
 export class CustomError extends Error{
-    //defini um atributo
     statusCode: number
 
     constructor(status: number, message: string){

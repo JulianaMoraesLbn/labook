@@ -1,10 +1,13 @@
 import { Request, Response } from "express"
+import { IUserBuseniss } from "../../Core/business/ports/services"
 import { UserBusiness } from "../../Core/business/UserBusiness"
 import { InvalidEmail, InvalidId, InvalidToken, MissingInformation } from "../../Core/entities/customError"
 import { FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDTO } from "../../Core/entities/User"
 
 
 export class UserController {
+
+    constructor(private iUserBuseniss: IUserBuseniss){}
 
     public signup = async (req: Request, res: Response):Promise<void> => {
 
@@ -23,8 +26,7 @@ export class UserController {
                 password
             }
 
-            const userBusiness = new UserBusiness()
-            const tokenresult = await userBusiness.signup(input)
+            const tokenresult = await this.iUserBuseniss.signup(input)
 
             res.status(201).send({ token: tokenresult })
 
@@ -52,12 +54,12 @@ export class UserController {
                 password
             }
 
-            const loginBusiness = new UserBusiness()
-            const token = await loginBusiness.login(input)
+            const token = await this.iUserBuseniss.login(input)
 
             res.status(200).send({ token: token })
 
         } catch (err: any) {
+            console.log("controller login", err)
             res.status(err.statusCode).send(err.message)
         }
     }
@@ -84,7 +86,7 @@ export class UserController {
                 token
             }
 
-            await new UserBusiness().friendship(input)
+            await this.iUserBuseniss.friendship(input)
 
             res.sendStatus(201)
 
@@ -111,7 +113,7 @@ export class UserController {
             token
         }
 
-        await new UserBusiness().unfriend(input)
+        await this.iUserBuseniss.unfriend(input)
 
         res.sendStatus(200)   
     }

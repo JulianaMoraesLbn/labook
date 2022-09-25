@@ -1,10 +1,14 @@
 import { InvalidId, InvalidToken, MissingInformation } from "../../Core/entities/customError"
 import { Request, Response } from "express"
 import { PostBusiness } from "../../Core/business/PostBusiness"
-import { createPostInputDTO, getPostInputDTO, getPostOutputDTO, inputComentatioPostDTO, inputFeedDTO, inputPostLikeDTO, inputTypeFeedDTO, Post } from "../../Core/entities/Post"
+import { createPostInputDTO, getPostInputDTO, getPostOutputDTO, inputCommentPostDTO, inputFeedDTO, inputPostLikeDTO, inputTypeFeedDTO, Post } from "../../Core/entities/Post"
+import { IdGenerator } from "../../Infraestruture/services/generateId"
+import { IPostBusiness } from "../../Core/business/ports/services"
 
 
 export class PostController {
+
+    constructor(private iPostBusiness: IPostBusiness){}
 
     public createPost = async (req: Request, res: Response):Promise<void> => {
 
@@ -29,8 +33,9 @@ export class PostController {
                 token
             }
 
-            const postBusiness = new PostBusiness()
-            await postBusiness.createPost(input)
+            await this.iPostBusiness.createPost(input)
+            /*const postBusiness = new PostBusiness(new IdGenerator)*/
+            /*await postBusiness.createPost(input)*/
 
             res.sendStatus(201)
 
@@ -51,7 +56,8 @@ export class PostController {
 
             const input: getPostInputDTO = { id }
 
-            const resultPost: Post = await new PostBusiness().getPostId(input)
+           /*  const resultPost: Post = await new PostBusiness(new IdGenerator).getPostId(input) */
+            const resultPost:Post = await this.iPostBusiness.getPostId(input)
 
             const postOutput: getPostOutputDTO = {
                 photo: resultPost.photo,
@@ -88,7 +94,8 @@ export class PostController {
                 page
             }
 
-            const resultFeed = await new PostBusiness().feedByUser(inputFeed)
+            /* const resultFeed = await new PostBusiness(new IdGenerator).feedByUser(inputFeed) */
+            const resultFeed = await this.iPostBusiness.feedByUser(inputFeed)
 
             res.status(200).send(resultFeed)
 
@@ -127,7 +134,8 @@ export class PostController {
                 page
             }
 
-            const resultFeed = await new PostBusiness().feedByType(inputTypeFeed)
+            /* const resultFeed = await new PostBusiness(new IdGenerator).feedByType(inputTypeFeed) */
+            const resultFeed = await this.iPostBusiness.feedByType(inputTypeFeed)
 
             res.status(200).send(resultFeed)
 
@@ -159,7 +167,8 @@ export class PostController {
                 token
             }
 
-            await new PostBusiness().postLike(inputPostLike)
+           /*  await new PostBusiness(new IdGenerator).postLike(inputPostLike) */
+            await this.iPostBusiness.postLike(inputPostLike)
 
             res.sendStatus(200)
 
@@ -188,7 +197,8 @@ export class PostController {
                 token
             }
 
-            await new PostBusiness().postUnlike(inputPostLike)
+            /* await new PostBusiness(new IdGenerator).postUnlike(inputPostLike) */
+            await this.iPostBusiness.postLike(inputPostLike)
 
             res.sendStatus(200)
 
@@ -197,10 +207,10 @@ export class PostController {
         }
     }
 
-    public createComentarioPost = async (req: Request, res: Response):Promise<void> => {
+    public createCommentPost = async (req: Request, res: Response):Promise<void> => {
 
         try {
-            const { comentario, idPost } = req.body
+            const { comment_post, idPost } = req.body
             const token: string = req.headers.authorization as string
 
             if (!idPost) {
@@ -210,14 +220,15 @@ export class PostController {
             if (!token) {
                 throw new InvalidToken
             }
-
-            const inputComentatioPost: inputComentatioPostDTO = {
-                comentario,
+            
+            const inputCommentPost: inputCommentPostDTO = {
+                comment_post,
                 idPost,
                 token
             }
 
-            await new PostBusiness().createComentarioPost(inputComentatioPost)
+  /*           await new PostBusiness(new IdGenerator).createCommentPost(inputCommentPost) */
+            await this.iPostBusiness.createCommentPost(inputCommentPost)
 
             res.sendStatus(201)
 

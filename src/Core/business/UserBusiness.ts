@@ -1,27 +1,28 @@
-import { UserDataBase } from "../../Infraestruture/data/UserDataBase";
-import { IdGenerator } from "../../Infraestruture/services/generateId";
-import { HashManager } from "../../Infraestruture/services/HashManager";
-import { TokenManager } from "../../Infraestruture/services/TokenGenerator";
 import { GenericError, InvalidEmail, InvalidPassword } from "../entities/customError";
 import { AuthenticationData, FriendshipInputDataDTO, FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDataDTO, UnfriendInputDTO, User } from "../entities/User";
+import { IHashManager, IidGenerator, ITokenManager, IUserBuseniss, IUserDataBase } from "./ports/services";
 
 
-export class UserBusiness {
+export class UserBusiness implements IUserBuseniss {
+
+    constructor(
+        private iUserDataBase: IUserDataBase,
+        private idGenerator: IidGenerator,
+        private iHashManager: IHashManager,
+        private tokenManger: ITokenManager
+    ) { }
 
     async signup(input: SignupInputDTO): Promise<string> {
 
         const { name, email, password } = input
 
-        const idGenarator = new IdGenerator()
-        const id: string = idGenarator.generateId()
+        const id: string = await this.idGenerator.generateId()
 
         /***** CRIPTOGRAFAR PASSWORD **** 15:45 VIDEO ******/
-        const hashManager = new HashManager()
-        const cipherText = await hashManager.generateHash(password)
+        const cipherText = await this.iHashManager.generateHash(password)
 
         /*** gerando o token ***/
-        const tokenManager = new TokenManager()
-        const token: string = await tokenManager.generateToken(id)
+        const token: string = await this.tokenManger.generateToken(id)
 
         const inputUser = {
             id,
@@ -30,8 +31,8 @@ export class UserBusiness {
             password: cipherText
         }
 
-        const userDataBase = new UserDataBase()
-        await userDataBase.insertUser(inputUser)
+        await this.iUserDataBase.insertUser(inputUser)
+        await this.iUserDataBase.insertUser(inputUser)
 
         /***retorno o token, porque o front vai precisar para validar */
         return token
@@ -40,41 +41,45 @@ export class UserBusiness {
     public async login(input: LoginInputDTO): Promise<string> {
 
         try {
-
+            console.log("entrou bus")
             const { email, password } = input
+            console.log(email, password)
 
-            const userDataBase = new UserDataBase()
-            const resultUser: User = await userDataBase.getUserEmail(email)
+            const resultUser: User = await this.iUserDataBase.getUserEmail(email)
+
+            console.log(resultUser)
 
             if (!resultUser) {
                 throw new InvalidEmail
             }
 
-            const hashManager = new HashManager()
-            const passwordIsCorrect: boolean = await hashManager.compareHash(password, resultUser.password)
+            const passwordIsCorrect: boolean = await this.iHashManager.compareHash(password, resultUser.password)
 
             if (!passwordIsCorrect) {
                 throw new InvalidPassword
             }
 
-            const tokenManager = new TokenManager()
-            const token: string = await tokenManager.generateToken(resultUser.id)
+
+            const token: string = await this.tokenManger.generateToken(resultUser.id)
 
             return token
 
         } catch (err: any) {
-            throw new Error
+            console.log("business", err.message)
+            throw new GenericError
         }
 
     }
 
-    public friendship = async (input: FriendshipInputDTO):Promise<void> => {
+    public friendship = async (input: FriendshipInputDTO): Promise<void> => {
 
         const { emailFriend, token } = input
 
-        const tokenPayloadId: AuthenticationData = await new TokenManager().getTokenData(token)
-        const resultUserFriend: User = await new UserDataBase().getUserEmail(emailFriend)
-        const id: string = await new IdGenerator().generateId()
+        const tokenPayloadId: AuthenticationData = await this.tokenManger.getTokenData(token)
+
+        const resultUserFriend: User = await this.iUserDataBase.getUserEmail(emailFriend)
+
+        const id: string = await this.idGenerator.generateId()
 
         const inputFriendData: FriendshipInputDataDTO = {
             id,
@@ -82,18 +87,17 @@ export class UserBusiness {
             id_friend: resultUserFriend.id
         }
 
-        await new UserDataBase().newFriendship(inputFriendData)
-
+        await this.iUserDataBase.newFriendship(inputFriendData)
 
     }
 
-    public unfriend = async (input: UnfriendInputDTO):Promise<void> => {
+    public unfriend = async (input: UnfriendInputDTO): Promise<void> => {
 
         const { id_friend, token } = input
 
-        const tokenPayloadId: AuthenticationData = await new TokenManager().getTokenData(token)
+        const tokenPayloadId: AuthenticationData = await this.tokenManger.getTokenData(token)
 
-        const resultUserGetId = await new UserDataBase().getUserId(id_friend)
+        const resultUserGetId = await this.iUserDataBase.getUserId(id_friend)
 
         if (!resultUserGetId.id) {
             throw new GenericError
@@ -104,7 +108,7 @@ export class UserBusiness {
             id_friend
         }
 
-        await new UserDataBase().unfriend(inputUnfriend)
+        await this.iUserDataBase.unfriend(inputUnfriend)
 
     }
 

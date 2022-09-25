@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs"
+import { IHashManager } from "../../Core/business/ports/services"
 
-export class HashManager {
+export class HashManager implements IHashManager{
 
     public generateHash = async (password: string): Promise<string> => {
 
@@ -11,7 +12,6 @@ export class HashManager {
         return hash
         
     }
-
 
     /***COMPRARA A HASH PARA USAR NO LOGIN ****/
     public compareHash = async (hashNow:string, hashBd: string):Promise<boolean> => {

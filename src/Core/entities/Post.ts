@@ -1,3 +1,8 @@
+/* 
+separar em input e output
+
+ */
+
 enum POST_TYPES {
     NORMAL = "normal",
     EVENT = "event"
@@ -23,15 +28,15 @@ export interface getPostInputDTO {
     id: string
 }
 
-export interface inputComentatioPostDTO {
-    comentario: string,
+export interface inputCommentPostDTO {
+    comment_post: string,
     idPost: string,
     token: string
 }
 
-export interface inputComentatioPostDataDTO {
+export interface inputCommentPostDataDTO {
     id: string
-    comentario: string,
+    comment_post: string,
     idUser: string,
     idPost: string
 }
@@ -83,6 +88,8 @@ export type Post = {
     createdAt: Date,
     author_id: string
 }
+
+/* colocar na camada de data pq estou modelando o que sai do banco  */
 
 export function postModel(obj: any): Post {
     return obj && {

@@ -1,9 +1,10 @@
+import { IPostDataBase } from "../../Core/business/ports/services";
 import { DataBaseErr } from "../../Core/entities/customError";
-import { getIdLikeDTO, inputComentatioPostDataDTO, inputFeedDataDTO, inputPostLikeDataDTO, Post, postModel } from "../../Core/entities/Post";
+import { getIdLikeDTO, inputCommentPostDataDTO, inputFeedDataDTO, inputPostLikeDataDTO, Post, postModel } from "../../Core/entities/Post";
 import { connectionDataBase } from "./connectionDataBase";
 
 
-export class PostDataBase extends connectionDataBase {
+export class PostDataBase extends connectionDataBase implements IPostDataBase {
 
     public createPost = async (post: Post):Promise<void> => {
 
@@ -116,19 +117,20 @@ export class PostDataBase extends connectionDataBase {
         }
     }
 
-    public createComentarioPost = async (inputComentatioPostData:inputComentatioPostDataDTO):Promise<void> => {
+    public createCommentPost = async (inputCommentPostData:inputCommentPostDataDTO):Promise<void> => {
 
-        const {id, comentario, idPost, idUser} = inputComentatioPostData
+        const {id, comment_post, idPost, idUser} = inputCommentPostData
 
-        await PostDataBase.connection("comentario_post")
+        await PostDataBase.connection("comment_post")
         .insert({
             id,
-            comentario,
+            comment_post,
             id_user: idUser,
             id_post: idPost
         })
     }
 
+    /* passar para a classe de User */
     public getIdFriends = async (id: string):Promise <string[]> => {
 
         const result = await PostDataBase.connection("friend_labook")

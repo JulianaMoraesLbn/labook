@@ -1,10 +1,11 @@
 import * as jwt from 'jsonwebtoken'
+import { ITokenManager } from '../../Core/business/ports/services'
 import { AuthenticationData } from '../../Core/entities/User'
 
 
-export class TokenManager {
+export class TokenManager implements ITokenManager{
 
-    public generateToken = (id: string) =>{
+    public generateToken = (id: string): string =>{
         console.log("id - token", id)
         const token = jwt.sign(
             {id},

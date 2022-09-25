@@ -1,14 +1,15 @@
+import { IUserDataBase } from "../../Core/business/ports/services";
 import { DataBaseErr } from "../../Core/entities/customError";
 import { FriendshipInputDataDTO, toUserModel, UnfriendInputDataDTO, User } from "../../Core/entities/User";
 import { connectionDataBase } from "./connectionDataBase";
 
 
-export class UserDataBase extends connectionDataBase {
+export class UserDataBase extends connectionDataBase implements IUserDataBase{
 
     public insertUser = async(user: User):Promise<void> => {
 
         try {
-
+            console.log("entrou")
             const { id, name, email, password } = user
 
             await UserDataBase.connection('user_labook')
@@ -20,7 +21,8 @@ export class UserDataBase extends connectionDataBase {
                 })
 
         } catch (err: any) {
-            throw new Error(err.sqlMessage)
+            console.log("data", err)
+            throw new Error(err.sqlMessage || err.message)
         }
 
     }
@@ -28,7 +30,7 @@ export class UserDataBase extends connectionDataBase {
     public getUserEmail = async(email: string): Promise<User> => {
 
         try {
-
+    
             const result: any = await UserDataBase.connection("user_labook")
                 .select("*")
                 .where("email", email)
@@ -36,7 +38,7 @@ export class UserDataBase extends connectionDataBase {
             return toUserModel(result[0])
 
         } catch (err: any) {
-            throw new Error(err.sqlMessage)
+            throw new Error(err.sqlMessage || err.message)
         }
 
     }
@@ -52,7 +54,7 @@ export class UserDataBase extends connectionDataBase {
             return toUserModel(result[0])
 
         } catch (err: any) {
-            throw new Error(err.sqlMessage)
+            throw new Error(err.sqlMessage || err.message)
         }
 
     }
@@ -70,7 +72,7 @@ export class UserDataBase extends connectionDataBase {
                 })
 
         } catch (err: any) {
-            throw new DataBaseErr(err.sqlMessage)
+            throw new DataBaseErr(err.sqlMessage || err.message)
         }
 
     }
@@ -86,18 +88,22 @@ export class UserDataBase extends connectionDataBase {
                 .andWhere("id_friend_two", id_friend)
 
         } catch (err: any) {
-            throw new DataBaseErr(err.sqlMessage)
+            throw new DataBaseErr(err.sqlMessage || err.message)
         }
 
     }
 
     public getAllFriendsById = async (id: string):Promise<[]> => {
 
+        try{
         const resultAllFriends = await UserDataBase.connection("friend_labook")
             .select('id_friend_two')
             .where('id_friend_one', id)
 
         return resultAllFriends[0]
+        }catch(err: any){
+            throw new DataBaseErr(err.sqlMessage || err.message)
+        }
     }
 
 

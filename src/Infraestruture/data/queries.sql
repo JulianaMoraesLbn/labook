@@ -36,9 +36,9 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    comentario_post(
+    comment_post(
         id VARCHAR(255) PRIMARY KEY,
-        comentario VARCHAR(500),
+        comment_post VARCHAR(500),
         id_user VARCHAR(255),
         id_post VARCHAR(255),
         FOREIGN KEY (id_user) REFERENCES user_labook (id),
