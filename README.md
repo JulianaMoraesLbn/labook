@@ -24,3 +24,4 @@
 - Criptografia(Bcrpt)
 - JWT (gerar token)
 - Organização baseada em arquitetura em camadas
+- Injeção de dependências 
