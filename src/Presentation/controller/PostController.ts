@@ -1,16 +1,16 @@
-import { InvalidId, InvalidToken, MissingInformation } from "../../Core/entities/customError"
+import { InvalidId, InvalidToken, MissingInformation } from "../../Common/customError"
 import { Request, Response } from "express"
-import { PostBusiness } from "../../Core/business/PostBusiness"
-import { createPostInputDTO, getPostInputDTO, getPostOutputDTO, inputCommentPostDTO, inputFeedDTO, inputPostLikeDTO, inputTypeFeedDTO, Post } from "../../Core/entities/Post"
-import { IdGenerator } from "../../Infraestruture/services/generateId"
-import { IPostBusiness } from "../../Core/business/ports/services"
+import { IPostBusiness } from "../../Core/business/ports/repository/repositories/repositoriesPostBusiness"
+import { createPostInputDTO, getPostInputDTO, getPostOutputDTO, inputCommentPostDTO, inputFeedDTO, inputPostLikeDTO, inputTypeFeedDTO, Post } from "./ports/repository/dtos/dtoPost"
+
 
 
 export class PostController {
 
-    constructor(private iPostBusiness: IPostBusiness){}
+    /*** está vindo da Business */
+    constructor(private iPostBusiness: IPostBusiness) { }
 
-    public createPost = async (req: Request, res: Response):Promise<void> => {
+    public createPost = async (req: Request, res: Response): Promise<void> => {
 
         try {
 
@@ -34,8 +34,6 @@ export class PostController {
             }
 
             await this.iPostBusiness.createPost(input)
-            /*const postBusiness = new PostBusiness(new IdGenerator)*/
-            /*await postBusiness.createPost(input)*/
 
             res.sendStatus(201)
 
@@ -44,7 +42,7 @@ export class PostController {
         }
     }
 
-    public getPostId = async (req: Request, res: Response):Promise<void> => {
+    public getPostId = async (req: Request, res: Response): Promise<void> => {
 
         try {
 
@@ -56,8 +54,7 @@ export class PostController {
 
             const input: getPostInputDTO = { id }
 
-           /*  const resultPost: Post = await new PostBusiness(new IdGenerator).getPostId(input) */
-            const resultPost:Post = await this.iPostBusiness.getPostId(input)
+            const resultPost: Post = await this.iPostBusiness.getPostId(input)
 
             const postOutput: getPostOutputDTO = {
                 photo: resultPost.photo,
@@ -74,7 +71,7 @@ export class PostController {
         }
     }
 
-    public feedByUser = async (req: Request, res: Response):Promise<void> => {
+    public feedByUser = async (req: Request, res: Response): Promise<void> => {
 
         try {
 
@@ -94,7 +91,6 @@ export class PostController {
                 page
             }
 
-            /* const resultFeed = await new PostBusiness(new IdGenerator).feedByUser(inputFeed) */
             const resultFeed = await this.iPostBusiness.feedByUser(inputFeed)
 
             res.status(200).send(resultFeed)
@@ -107,7 +103,7 @@ export class PostController {
 
     }
 
-    public feedByType = async (req: Request, res: Response):Promise<void> => {
+    public feedByType = async (req: Request, res: Response): Promise<void> => {
 
         try {
 
@@ -134,7 +130,6 @@ export class PostController {
                 page
             }
 
-            /* const resultFeed = await new PostBusiness(new IdGenerator).feedByType(inputTypeFeed) */
             const resultFeed = await this.iPostBusiness.feedByType(inputTypeFeed)
 
             res.status(200).send(resultFeed)
@@ -147,7 +142,7 @@ export class PostController {
 
     }
 
-    public postLike = async (req: Request, res: Response):Promise<void> => {
+    public postLike = async (req: Request, res: Response): Promise<void> => {
 
         try {
 
@@ -167,7 +162,6 @@ export class PostController {
                 token
             }
 
-           /*  await new PostBusiness(new IdGenerator).postLike(inputPostLike) */
             await this.iPostBusiness.postLike(inputPostLike)
 
             res.sendStatus(200)
@@ -177,7 +171,7 @@ export class PostController {
         }
     }
 
-    public postUnlike = async (req: Request, res: Response):Promise<void> => {
+    public postUnlike = async (req: Request, res: Response): Promise<void> => {
 
         try {
 
@@ -197,7 +191,6 @@ export class PostController {
                 token
             }
 
-            /* await new PostBusiness(new IdGenerator).postUnlike(inputPostLike) */
             await this.iPostBusiness.postLike(inputPostLike)
 
             res.sendStatus(200)
@@ -207,7 +200,7 @@ export class PostController {
         }
     }
 
-    public createCommentPost = async (req: Request, res: Response):Promise<void> => {
+    public createCommentPost = async (req: Request, res: Response): Promise<void> => {
 
         try {
             const { comment_post, idPost } = req.body
@@ -220,14 +213,13 @@ export class PostController {
             if (!token) {
                 throw new InvalidToken
             }
-            
+
             const inputCommentPost: inputCommentPostDTO = {
                 comment_post,
                 idPost,
                 token
             }
 
-  /*           await new PostBusiness(new IdGenerator).createCommentPost(inputCommentPost) */
             await this.iPostBusiness.createCommentPost(inputCommentPost)
 
             res.sendStatus(201)

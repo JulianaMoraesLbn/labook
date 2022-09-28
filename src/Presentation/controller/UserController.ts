@@ -1,12 +1,13 @@
 import { Request, Response } from "express"
-import { IUserBuseniss } from "../../Core/business/ports/services"
-import { UserBusiness } from "../../Core/business/UserBusiness"
-import { InvalidEmail, InvalidId, InvalidToken, MissingInformation } from "../../Core/entities/customError"
-import { FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDTO } from "../../Core/entities/User"
+import { InvalidEmail, InvalidId, InvalidToken, MissingInformation } from "../../Common/customError"
+import { IUserBuseniss } from "../../Core/business/ports/repository/repositories/repositoriesUserBusiness"
+import { FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDTO } from "./ports/repository/dtos/dtoUser"
+
 
 
 export class UserController {
 
+    /** está vindo da business */
     constructor(private iUserBuseniss: IUserBuseniss){}
 
     public signup = async (req: Request, res: Response):Promise<void> => {

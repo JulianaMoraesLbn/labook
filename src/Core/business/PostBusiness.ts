@@ -1,14 +1,20 @@
-import { Duplicate, GenericError, InvalidToken, PostNonexistent } from "../entities/customError"
-import { createPostInputDTO, getIdLikeDTO, getPostInputDTO, inputCommentPostDataDTO, inputCommentPostDTO, inputFeedDataDTO, inputFeedDTO, inputPostLikeDataDTO, inputPostLikeDTO, inputTypeFeedDTO, Post } from "../entities/Post"
-import { AuthenticationData } from "../entities/User"
-import { IidGenerator, IPostBusiness, IPostDataBase, ITokenManager } from "./ports/services"
+import { Duplicate, GenericError, InvalidToken, PostNonexistent } from "../../Common/customError"
+import { IPostDataBase} from "../../Infraestruture/ports/repository/repositories/repositoriesPostData"
+import { IUserDataBase } from "../../Infraestruture/ports/repository/repositories/repositoriesUserData"
+import { createPostInputDTO, getIdLikeDTO, getPostInputDTO, inputCommentPostDataDTO, inputCommentPostDTO, inputFeedDataDTO, inputFeedDTO, inputPostLikeDataDTO, inputPostLikeDTO, inputTypeFeedDTO, Post } from "./ports/repository/dtos/dtoPost"
+import { AuthenticationData } from "./ports/repository/dtos/dtoUser"
+import { IPostBusiness } from "./ports/repository/repositories/repositoriesPostBusiness"
+import { IidGenerator, ITokenManager } from "./ports/repository/repositories/repositoriesServices"
+
 
 export class PostBusiness implements IPostBusiness{
 
     constructor(
         private idGenerator: IidGenerator, 
         private tokenManger: ITokenManager,
-        private iPostDataBase: IPostDataBase
+        /** essas duas interfaces estão vindo do Data... pode? */
+        private iPostDataBase: IPostDataBase,
+        private iUserDataBase: IUserDataBase
         ){}
 
     public createPost = async (input: createPostInputDTO):Promise<void> => {
@@ -28,8 +34,6 @@ export class PostBusiness implements IPostBusiness{
             author_id: tokenPayloadId.id,
         }
 
-        /* const postDataBase = new PostDataBase()
-        await postDataBase.createPost(post) */
         await this.iPostDataBase.createPost(post)
 
     }
@@ -37,7 +41,7 @@ export class PostBusiness implements IPostBusiness{
     public getPostId = async (input: getPostInputDTO):Promise<Post> => {
 
         const { id } = input
-        /* const post: Post = await new PostDataBase().getPostId(id) */
+
         const post: Post = await this.iPostDataBase.getPostId(id)
         return post
     }
@@ -55,12 +59,7 @@ export class PostBusiness implements IPostBusiness{
             throw new InvalidToken
         }
 
-        /* const resultIdFriends: string[] = await new PostDataBase().getIdFriends(tokenPayloadId.id) 
-        
-        const resultPostFriends: Post[] = await new PostDataBase().getFeedByUser(resultIdFriends)
-        */
-
-        const resultIdFriends: string[] = await this.iPostDataBase.getIdFriends(tokenPayloadId.id)
+        const resultIdFriends: string[] = await this.iUserDataBase.getIdFriends(tokenPayloadId.id)
 
         const resultPostFriends:Post[] = await this.iPostDataBase.getFeedByUser(resultIdFriends)
 
@@ -77,8 +76,6 @@ export class PostBusiness implements IPostBusiness{
 
         const tokenPayloadId: AuthenticationData = await this.tokenManger.getTokenData(token)
 
-        /* const resultFriends = await new UserDataBase().getAllFriendsById(tokenPayloadId.id) */
-
         if (!tokenPayloadId.id) {
             throw new InvalidToken
         }
@@ -88,8 +85,6 @@ export class PostBusiness implements IPostBusiness{
             offset,
             typePost
         }
-
-        /* const resultPostType:Post[] = await new PostDataBase().getPostByType(inputFeedData) */
 
         const resultPostType:Post[] = await this.iPostDataBase.getPostByType(inputFeedData)
 
@@ -113,8 +108,6 @@ export class PostBusiness implements IPostBusiness{
             idUser: tokenPayloadId.id
         } 
 
-        /* const getIdLikePost = await new PostDataBase().getIdLikePost(inputGetIdLikePost) */
-
         const getIdLikePost = await this.iPostDataBase.getIdLikePost(inputGetIdLikePost)
 
         if(getIdLikePost.length > 0){
@@ -128,8 +121,7 @@ export class PostBusiness implements IPostBusiness{
             idPost,
             idUser: tokenPayloadId.id
         } 
-        
-       /*  return await new PostDataBase().postLike(inputPostLikeData)  */
+
         return await this.iPostDataBase.postLike(inputPostLikeData) 
 
     }
@@ -149,15 +141,12 @@ export class PostBusiness implements IPostBusiness{
             idUser: tokenPayloadId.id
         } 
 
-        /* const getIdLikePost = await new PostDataBase().getIdLikePost(inputGetIdLike) */
-
         const getIdLikePost = await this.iPostDataBase.getIdLikePost(inputGetIdLike)
 
         if(getIdLikePost.length < 0 || getIdLikePost === undefined){
             throw new GenericError
         }
 
-        /* return await new PostDataBase().postUnlike(getIdLikePost) */
         return await this.iPostDataBase.postUnlike(getIdLikePost)
 
     }
@@ -181,7 +170,6 @@ export class PostBusiness implements IPostBusiness{
             idPost
         }
 
-        /* await new PostDataBase().createCommentPost(inputCommentPostData) */
         await this.iPostDataBase.createCommentPost(inputCommentPostData)
     }
 }

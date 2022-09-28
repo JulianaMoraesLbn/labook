@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken'
-import { ITokenManager } from '../../Core/business/ports/services'
+import { ITokenManager } from '../../Core/business/ports/repository/repositories/repositoriesServices'
 import { AuthenticationData } from '../../Core/entities/User'
 
 

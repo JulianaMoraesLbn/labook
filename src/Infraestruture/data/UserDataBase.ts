@@ -1,6 +1,6 @@
-import { IUserDataBase } from "../../Core/business/ports/services";
-import { DataBaseErr } from "../../Core/entities/customError";
-import { FriendshipInputDataDTO, toUserModel, UnfriendInputDataDTO, User } from "../../Core/entities/User";
+import { DataBaseErr } from "../../Common/customError";
+import { FriendshipInputDataDTO, toUserModel, UnfriendInputDataDTO, User } from "../ports/repository/dtos/dtoUser";
+import { IUserDataBase } from "../ports/repository/repositories/repositoriesUserData";
 import { connectionDataBase } from "./connectionDataBase";
 
 
@@ -104,6 +104,15 @@ export class UserDataBase extends connectionDataBase implements IUserDataBase{
         }catch(err: any){
             throw new DataBaseErr(err.sqlMessage || err.message)
         }
+    }
+
+    public getIdFriends = async (id: string):Promise <string[]> => {
+
+        const result = await UserDataBase.connection("friend_labook")
+        .select("id_friend_two")
+        .where("id_friend_one", id)
+
+        return result.flatMap(array => array.id_friend_two)
     }
 
 

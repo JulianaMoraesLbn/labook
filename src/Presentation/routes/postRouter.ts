@@ -1,15 +1,16 @@
 import express from 'express'
 import { PostBusiness } from '../../Core/business/PostBusiness'
 import { PostController } from '../controller/PostController'
-import { IPostBusiness } from "../../Core/business/ports/services"
 import { IdGenerator } from '../../Infraestruture/services/generateId'
 import { TokenManager } from '../../Infraestruture/services/TokenGenerator'
 import { PostDataBase } from '../../Infraestruture/data/PostDataBase'
+import { UserDataBase } from '../../Infraestruture/data/UserDataBase'
 
 export const postRouter = express.Router()
 
 const postDataBase = new PostDataBase()
-const postBusiness = new PostBusiness(new IdGenerator, new TokenManager, postDataBase)
+const userDataBase = new UserDataBase()
+const postBusiness = new PostBusiness(new IdGenerator, new TokenManager, postDataBase, userDataBase)
 const postController = new PostController(postBusiness)
 
 postRouter.get("/feed", postController.feedByUser) /* Feed do usuário - visualiza o post dos amigos - ok*/

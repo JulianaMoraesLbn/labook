@@ -1,10 +1,15 @@
-import { GenericError, InvalidEmail, InvalidPassword } from "../entities/customError";
-import { AuthenticationData, FriendshipInputDataDTO, FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDataDTO, UnfriendInputDTO, User } from "../entities/User";
-import { IHashManager, IidGenerator, ITokenManager, IUserBuseniss, IUserDataBase } from "./ports/services";
+import { GenericError, InvalidEmail, InvalidPassword } from "../../Common/customError";
+import { FriendshipInputDataDTO, UnfriendInputDataDTO } from "../../Infraestruture/ports/repository/dtos/dtoUser";
+import { IUserDataBase } from "../../Infraestruture/ports/repository/repositories/repositoriesUserData";
+import { AuthenticationData, FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDTO, User } from "./ports/repository/dtos/dtoUser";
+import { IHashManager, IidGenerator, ITokenManager } from "./ports/repository/repositories/repositoriesServices";
+import { IUserBuseniss } from "./ports/repository/repositories/repositoriesUserBusiness";
+
 
 
 export class UserBusiness implements IUserBuseniss {
 
+    /** PODE INPORTAR E DATA? */
     constructor(
         private iUserDataBase: IUserDataBase,
         private idGenerator: IidGenerator,
@@ -18,10 +23,8 @@ export class UserBusiness implements IUserBuseniss {
 
         const id: string = await this.idGenerator.generateId()
 
-        /***** CRIPTOGRAFAR PASSWORD **** 15:45 VIDEO ******/
         const cipherText = await this.iHashManager.generateHash(password)
 
-        /*** gerando o token ***/
         const token: string = await this.tokenManger.generateToken(id)
 
         const inputUser = {
@@ -34,7 +37,6 @@ export class UserBusiness implements IUserBuseniss {
         await this.iUserDataBase.insertUser(inputUser)
         await this.iUserDataBase.insertUser(inputUser)
 
-        /***retorno o token, porque o front vai precisar para validar */
         return token
     }
 

@@ -1,9 +1,9 @@
-/* 
-separar em input e output
+/* input e output dos business */
 
- */
 
-/* enum POST_TYPES {
+/* INPUT */
+
+enum POST_TYPES {
     NORMAL = "normal",
     EVENT = "event"
 }
@@ -21,19 +21,6 @@ export interface getPostInputDTO {
     id: string
 }
 
-export interface inputCommentPostDTO {
-    comment_post: string,
-    idPost: string,
-    token: string
-}
-
-export interface inputCommentPostDataDTO {
-    id: string
-    comment_post: string,
-    idUser: string,
-    idPost: string
-}
-
 export interface inputFeedDTO {
     token: string,
     page: number
@@ -45,38 +32,26 @@ export interface inputTypeFeedDTO {
     token: string
 }
 
-export interface inputFeedDataDTO {
-    size: number,
-    offset: number,
-    typePost: string
-}
-
 export interface inputPostLikeDTO {
     idPost: string,
     token: string
 }
 
-export interface inputPostLikeDataDTO {
-    id: string,
+export interface inputCommentPostDTO {
+    comment_post: string,
     idPost: string,
-    idUser: string
-}
-
-export interface inputPostUnlikeDataDTO {
-    id: string,
-    idPost: string,
-    idUser: string
+    token: string
 }
 
 export interface getIdLikeDTO {
     idPost: string,
     idUser: string
-} */
+}
 
 
 /*** OUTPUT ****/
 
-/* export type Post = {
+export type Post = {
     id: string,
     photo: string,
     description: string,
@@ -90,10 +65,12 @@ export interface getPostOutputDTO {
     description: string,
     type: POST_TYPES,
     createdAt: Date
-} */
+}
+
+
 /* colocar na camada de data pq estou modelando o que sai do banco  */
 
-/* export function postModel(obj: any): Post {
+export function postModel(obj: any): Post {
     return obj && {
         id: obj.id,
         photo: obj.photo,
@@ -102,6 +79,33 @@ export interface getPostOutputDTO {
         createdAt: obj.create_at,
         author_id: obj.author_id
     }
-} */
+}
+
+/*** DATABASE ***/
+
+export interface inputCommentPostDataDTO {
+    id: string
+    comment_post: string,
+    idUser: string,
+    idPost: string
+}
 
 
+export interface inputPostUnlikeDataDTO {
+    id: string,
+    idPost: string,
+    idUser: string
+}
+
+export interface inputFeedDataDTO {
+    size: number,
+    offset: number,
+    typePost: string
+}
+
+
+export interface inputPostLikeDataDTO {
+    id: string,
+    idPost: string,
+    idUser: string
+}

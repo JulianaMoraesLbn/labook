@@ -1,7 +1,3 @@
-/* export type AuthenticationData = {
-    id: string
-}
-
 export type User = {
     id: string,
     name: string,
@@ -9,21 +5,6 @@ export type User = {
     password: string
 }
 
-export interface SignupInputDTO {
-    name: string,
-    email: string,
-    password: string
-}
-
-export interface LoginInputDTO {
-    email: string,
-    password: string
-}
-
-export interface FriendshipInputDTO{
-    emailFriend: string,
-    token: string
-}
 
 export interface FriendshipInputDataDTO{
     id: string,
@@ -41,6 +22,7 @@ export interface UnfriendInputDataDTO{
     id_friend: string
 }
 
+
 export function toUserModel(obj:any): User{
     return obj && {
         id: obj.id,
@@ -49,5 +31,3 @@ export function toUserModel(obj:any): User{
         password: obj.password
     }
 }
-
- */

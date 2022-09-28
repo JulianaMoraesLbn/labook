@@ -1,7 +1,8 @@
-import { IPostDataBase } from "../../Core/business/ports/services";
-import { DataBaseErr } from "../../Core/entities/customError";
-import { getIdLikeDTO, inputCommentPostDataDTO, inputFeedDataDTO, inputPostLikeDataDTO, Post, postModel } from "../../Core/entities/Post";
+import { DataBaseErr } from "../../Common/customError";
+import { getIdLikeDTO, inputCommentPostDataDTO, inputFeedDataDTO, inputPostLikeDataDTO, Post, postModel } from "../ports/repository/dtos/dtoPost";
+import { IPostDataBase } from "../ports/repository/repositories/repositoriesPostData";
 import { connectionDataBase } from "./connectionDataBase";
+
 
 
 export class PostDataBase extends connectionDataBase implements IPostDataBase {
@@ -128,16 +129,6 @@ export class PostDataBase extends connectionDataBase implements IPostDataBase {
             id_user: idUser,
             id_post: idPost
         })
-    }
-
-    /* passar para a classe de User */
-    public getIdFriends = async (id: string):Promise <string[]> => {
-
-        const result = await PostDataBase.connection("friend_labook")
-        .select("id_friend_two")
-        .where("id_friend_one", id)
-
-        return result.flatMap(array => array.id_friend_two)
     }
 
     public getFeedByUser = async (inputIdFriends:string[]):Promise<Post[]> => {
