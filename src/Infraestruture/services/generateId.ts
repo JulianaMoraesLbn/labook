@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { IidGenerator } from "../../Core/business/ports/repository/repositories/repositoriesServices";
+import { IidGenerator } from "../ports/repository/repositories/repositoriesServices";
 
 
 export class IdGenerator implements IidGenerator {

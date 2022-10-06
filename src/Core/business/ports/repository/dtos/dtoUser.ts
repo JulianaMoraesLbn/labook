@@ -34,5 +34,15 @@ export interface UnfriendInputDTO{
     token: string
 }
 
+export interface FriendshipInputDataDTO{
+    id: string,
+    id_user: string,
+    id_friend: string
+}
+
+export interface UnfriendInputDataDTO{
+    id_user: string,
+    id_friend: string
+}
 
 

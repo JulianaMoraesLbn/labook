@@ -5,6 +5,9 @@ export type User = {
     password: string
 }
 
+export type AuthenticationData = {
+    id: string
+}
 
 export interface FriendshipInputDataDTO{
     id: string,

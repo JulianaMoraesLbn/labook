@@ -1,5 +1,5 @@
 import { GenericError, InvalidEmail, InvalidPassword } from "../../Common/customError";
-import { FriendshipInputDataDTO, UnfriendInputDataDTO } from "../../Infraestruture/ports/repository/dtos/dtoUser";
+import { FriendshipInputDataDTO, UnfriendInputDataDTO } from "./ports/repository/dtos/dtoUser";
 import { IUserDataBase } from "../../Infraestruture/ports/repository/repositories/repositoriesUserData";
 import { AuthenticationData, FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDTO, User } from "./ports/repository/dtos/dtoUser";
 import { IHashManager, IidGenerator, ITokenManager } from "./ports/repository/repositories/repositoriesServices";

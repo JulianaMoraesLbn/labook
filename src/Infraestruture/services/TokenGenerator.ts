@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken'
 import { ITokenManager } from '../../Core/business/ports/repository/repositories/repositoriesServices'
-import { AuthenticationData } from '../../Core/entities/User'
+import { AuthenticationData } from '../ports/repository/dtos/dtoUser'
 
 
 export class TokenManager implements ITokenManager{

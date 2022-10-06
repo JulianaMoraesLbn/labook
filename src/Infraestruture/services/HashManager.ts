@@ -1,5 +1,5 @@
 import * as bcrypt from "bcryptjs"
-import { IHashManager } from "../../Core/business/ports/repository/repositories/repositoriesServices"
+import { IHashManager } from "../ports/repository/repositories/repositoriesServices"
 
 export class HashManager implements IHashManager{
 

@@ -7,6 +7,7 @@ import { createPostInputDTO, getPostInputDTO, getPostOutputDTO, inputCommentPost
 
 export class PostController {
 
+    //inversao de dependecias pq passei a usar as interfaces
     /*** está vindo da Business */
     constructor(private iPostBusiness: IPostBusiness) { }
 

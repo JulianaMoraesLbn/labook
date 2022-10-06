@@ -14,8 +14,9 @@ export class UserController {
 
         try {
 
+            console.log("antes")
             const { name, email, password } = req.body
-
+            console.log("depois")
 
             if (!name || !email || !password) {
                 throw new MissingInformation
@@ -32,7 +33,10 @@ export class UserController {
             res.status(201).send({ token: tokenresult })
 
         } catch (err: any) {
+            console.log("status: ", err.statusCode)
             res.status(err.statusCode).send(err.message)
+           /*  const retornoStatus = res.status(err.statusCode)
+            retornoStatus */
         }
     }
 
