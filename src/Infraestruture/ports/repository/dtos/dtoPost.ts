@@ -11,7 +11,7 @@ export type Post = {
     description: string,
     type: POST_TYPES,
     createdAt: Date,
-    author_id: string
+    authorId: string
 }
 
 export function postModel(obj: any): Post {

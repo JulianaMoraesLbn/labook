@@ -6,7 +6,7 @@ import { AuthenticationData } from '../ports/repository/dtos/dtoUser'
 export class TokenManager implements ITokenManager{
 
     public generateToken = (id: string): string =>{
-        console.log("id - token", id)
+
         const token = jwt.sign(
             {id},
             process.env.JWT_KEY as string,

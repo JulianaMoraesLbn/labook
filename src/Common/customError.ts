@@ -55,6 +55,12 @@ export class InvalidToken extends CustomError{
     }
 }
 
+export class LikePostNotFound extends CustomError{
+    constructor(){
+        super(400, "Like não encontrado")
+    }
+}
+
 export class GenericError extends CustomError{
     constructor(){
         super(500, "Ocorreu um erro")

@@ -1,10 +1,9 @@
-import { Duplicate, GenericError, InvalidToken, PostNonexistent } from "../../Common/customError"
-import { IPostDataBase} from "../../Infraestruture/ports/repository/repositories/repositoriesPostData"
-import { IUserDataBase } from "../../Infraestruture/ports/repository/repositories/repositoriesUserData"
+import { Duplicate, GenericError, InvalidToken} from "../../Common/customError"
 import { createPostInputDTO, getIdLikeDTO, getPostInputDTO, inputCommentPostDataDTO, inputCommentPostDTO, inputFeedDataDTO, inputFeedDTO, inputPostLikeDataDTO, inputPostLikeDTO, inputTypeFeedDTO, Post } from "./ports/repository/dtos/dtoPost"
 import { AuthenticationData } from "./ports/repository/dtos/dtoUser"
-import { IPostBusiness } from "./ports/repository/repositories/repositoriesPostBusiness"
+import { IPostBusiness, IPostDataBase } from "./ports/repository/repositories/repositoriesPostBusiness"
 import { IidGenerator, ITokenManager } from "./ports/repository/repositories/repositoriesServices"
+import { IUserDataBase } from "./ports/repository/repositories/repositoriesUserBusiness"
 
 
 export class PostBusiness implements IPostBusiness{
@@ -12,16 +11,16 @@ export class PostBusiness implements IPostBusiness{
     constructor(
         private idGenerator: IidGenerator, 
         private tokenManger: ITokenManager,
-        /** essas duas interfaces estão vindo do Data... pode? */
         private iPostDataBase: IPostDataBase,
         private iUserDataBase: IUserDataBase
         ){}
 
     public createPost = async (input: createPostInputDTO):Promise<void> => {
 
-        const { photo, description, type, token } = input
+        const { photo, description, type, authorId, token } = input
 
-        const tokenPayloadId: AuthenticationData = await this.tokenManger.getTokenData(token)
+        //middleware de autenticação - do express - apikey - 
+        
 
         const id: string = this.idGenerator.generateId()
 
@@ -31,7 +30,7 @@ export class PostBusiness implements IPostBusiness{
             description,
             type,
             createdAt: new Date(),
-            author_id: tokenPayloadId.id,
+            authorId,
         }
 
         await this.iPostDataBase.createPost(post)
@@ -49,6 +48,7 @@ export class PostBusiness implements IPostBusiness{
     public feedByUser = async (inputFeed: inputFeedDTO):Promise<Post[]> => {
 
         const { token, page } = inputFeed
+        // regra de negocio da aplicacao
 
         let size = 5
         let offset = size * (page - 1)
@@ -91,64 +91,48 @@ export class PostBusiness implements IPostBusiness{
         return resultPostType
     }
 
+
+    //REFAZER O POST LIKE E FAZER OS TESTES - DARVAS
     public postLike = async (inputPostLike: inputPostLikeDTO):Promise<void> => {
 
-        const { idPost, token } = inputPostLike
+        const { idPost, idUser } = inputPostLike
 
-        const tokenPayloadId: AuthenticationData = await this.tokenManger.getTokenData(token)
-
-        const id: string = this.idGenerator.generateId()
-
-        if(! tokenPayloadId.id){
+        if(! idUser){
             throw new InvalidToken
         }
 
-        const inputGetIdLikePost: getIdLikeDTO = {
-            idPost,
-            idUser: tokenPayloadId.id
-        } 
+        console.log("entrou business", idPost, idUser)
 
-        const getIdLikePost = await this.iPostDataBase.getIdLikePost(inputGetIdLikePost)
+        //Regra de negocio
+        const id: string = this.idGenerator.generateId()
 
-        if(getIdLikePost.length > 0){
-            throw new Duplicate
-        }else if(getIdLikePost === undefined || " ") {
-            throw new PostNonexistent
+        console.log("gerou id do like", id)
+
+        //o post já foi curtido?
+        const isUserLikePost:boolean = await this.iPostDataBase.likePostByUser(idPost, idUser)
+
+        console.log("já curtiu? ", isUserLikePost)
+
+        if(isUserLikePost){
+           throw new Duplicate 
         }
 
+        //Input para registro do like na tabela de relacionamento
         const inputPostLikeData: inputPostLikeDataDTO = {
             id,
             idPost,
-            idUser: tokenPayloadId.id
+            idUser
         } 
 
         return await this.iPostDataBase.postLike(inputPostLikeData) 
 
     }
 
-    public postUnlike = async (inputPostLike: inputPostLikeDTO):Promise<void> => {
 
-        const { idPost, token } = inputPostLike
-
-        const tokenPayloadId: AuthenticationData = await this.tokenManger.getTokenData(token)
-
-        if(! tokenPayloadId.id){
-            throw new InvalidToken
-        }
-
-        const inputGetIdLike: getIdLikeDTO = {
-            idPost,
-            idUser: tokenPayloadId.id
-        } 
-
-        const getIdLikePost = await this.iPostDataBase.getIdLikePost(inputGetIdLike)
-
-        if(getIdLikePost.length < 0 || getIdLikePost === undefined){
-            throw new GenericError
-        }
-
+    public postUnlike = async (getIdLikePost: string):Promise<void> => {
+        
         return await this.iPostDataBase.postUnlike(getIdLikePost)
-
+        
     }
 
     public createCommentPost = async (inputCommentPost:inputCommentPostDTO):Promise<void> => {
@@ -157,7 +141,7 @@ export class PostBusiness implements IPostBusiness{
 
         const tokenPayloadId: AuthenticationData = await this.tokenManger.getTokenData(token)
 
-        if(! tokenPayloadId.id){
+        if(!tokenPayloadId.id){
             throw new InvalidToken
         }
 

@@ -1,15 +1,13 @@
 import { GenericError, InvalidEmail, InvalidPassword } from "../../Common/customError";
 import { FriendshipInputDataDTO, UnfriendInputDataDTO } from "./ports/repository/dtos/dtoUser";
-import { IUserDataBase } from "../../Infraestruture/ports/repository/repositories/repositoriesUserData";
 import { AuthenticationData, FriendshipInputDTO, LoginInputDTO, SignupInputDTO, UnfriendInputDTO, User } from "./ports/repository/dtos/dtoUser";
 import { IHashManager, IidGenerator, ITokenManager } from "./ports/repository/repositories/repositoriesServices";
-import { IUserBuseniss } from "./ports/repository/repositories/repositoriesUserBusiness";
+import { IUserBuseniss, IUserDataBase } from "./ports/repository/repositories/repositoriesUserBusiness";
 
 
 
 export class UserBusiness implements IUserBuseniss {
 
-    /** PODE INPORTAR E DATA? */
     constructor(
         private iUserDataBase: IUserDataBase,
         private idGenerator: IidGenerator,
@@ -35,23 +33,22 @@ export class UserBusiness implements IUserBuseniss {
         }
 
         await this.iUserDataBase.insertUser(inputUser)
-        await this.iUserDataBase.insertUser(inputUser)
 
         return token
     }
 
     public async login(input: LoginInputDTO): Promise<string> {
 
-        try {
-            console.log("entrou bus")
+      
             const { email, password } = input
             console.log(email, password)
 
             const resultUser: User = await this.iUserDataBase.getUserEmail(email)
 
-            console.log(resultUser)
+            console.log("aqui", resultUser)
 
             if (!resultUser) {
+                console.log("entrou aqui")
                 throw new InvalidEmail
             }
 
@@ -65,11 +62,6 @@ export class UserBusiness implements IUserBuseniss {
             const token: string = await this.tokenManger.generateToken(resultUser.id)
 
             return token
-
-        } catch (err: any) {
-            console.log("business", err.message)
-            throw new GenericError
-        }
 
     }
 

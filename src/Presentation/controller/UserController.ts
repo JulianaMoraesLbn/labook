@@ -33,7 +33,6 @@ export class UserController {
             res.status(201).send({ token: tokenresult })
 
         } catch (err: any) {
-            console.log("status: ", err.statusCode)
             res.status(err.statusCode).send(err.message)
            /*  const retornoStatus = res.status(err.statusCode)
             retornoStatus */
@@ -45,14 +44,16 @@ export class UserController {
         try {
 
             const { email, password } = req.body
-
+            console.log(email)
             if (!email || !password) {
                 throw new MissingInformation
             }
-
+            console.log("aqui")
             if (!email.includes("@")) {
                 throw new InvalidEmail
             }
+
+            console.log("passou")
 
             const input: LoginInputDTO = {
                 email,
@@ -64,7 +65,7 @@ export class UserController {
             res.status(200).send({ token: token })
 
         } catch (err: any) {
-            console.log("controller login", err)
+            console.log("constrolleer", err.message)
             res.status(err.statusCode).send(err.message)
         }
     }

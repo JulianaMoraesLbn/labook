@@ -11,7 +11,7 @@ export const postRouter = express.Router()
 const postDataBase = new PostDataBase()
 const userDataBase = new UserDataBase()
 const postBusiness = new PostBusiness(new IdGenerator, new TokenManager, postDataBase, userDataBase)
-const postController = new PostController(postBusiness)
+const postController = new PostController(postBusiness, new TokenManager, postDataBase)
 
 postRouter.get("/feed", postController.feedByUser) /* Feed do usuário - visualiza o post dos amigos - ok*/
 postRouter.get("/:id", postController.getPostId) /* Retorna um post passando o id do post */

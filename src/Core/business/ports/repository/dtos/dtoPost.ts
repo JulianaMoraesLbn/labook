@@ -13,7 +13,7 @@ export interface createPostInputDTO {
     photo: string,
     description: string,
     type: POST_TYPES,
-    author_id: string
+    authorId: string
     token: string
 }
 
@@ -34,7 +34,7 @@ export interface inputTypeFeedDTO {
 
 export interface inputPostLikeDTO {
     idPost: string,
-    token: string
+    idUser: string
 }
 
 export interface inputCommentPostDTO {
@@ -57,7 +57,7 @@ export type Post = {
     description: string,
     type: POST_TYPES,
     createdAt: Date,
-    author_id: string
+    authorId: string
 }
 
 export interface getPostOutputDTO {
